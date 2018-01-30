@@ -1,0 +1,267 @@
+Base Input for Molybdenum HEU Critical Experiment
+C
+C *****************************************************************************
+C *                              CELL CARDS                                   *
+C *****************************************************************************
+C
+C ========================> Solid Fuel Plates Universe <=======================
+WRITE SOLID PLATES HERE
+C =====================> 2.5" Hole Fuel Plates Universe <======================
+WRITE 2.5 PLATES HERE
+C ======================> 6" Hole Fuel Plates Universe <=======================
+WRITE 6 PLATES HERE
+C ============================> Solid Disk Plate <=============================
+90   3 -18.8525  -60  U=4                                                      $ Solid plate uranium
+91   0            60  U=4                                                      $ Outside of solid plate
+C =============================> 2.5" Hole Plate <=============================
+92   3 -18.8525  -60 61   U=5                                                  $ 2.5" hole plate uranium
+93   0           -60 -61  U=5                                                  $ 2.5" hole
+94   0            60      U=5                                                  $ Outside of 2.5" hole plate
+C ==============================> 6" Hole Plate <==============================
+95   3 -18.8525  -60 62   U=6                                                  $ 6" hole plate uranium
+96   0           -60 -62  U=6                                                  $ 6" hole
+97   0            60      U=6                                                  $ Outside of 6" hole plate
+C ======================> Solid Fuel Unit Cell Universe <======================
+100  0  99 -CellCyl  FILL=1  U=7                                               $ Solid fuel unit cell
+101  0  #100           U=7                                                     $ Outside of solid fuel unit cell
+C ======================> 2.5" Hole Unit Cell Universe <=======================
+102  0  99 -CellCyl  FILL=2  U=8                                               $ 2.5" hole fuel unit cell
+103  0  #102           U=8                                                     $ Outside of 2.5" hole unit cell
+C =======================> 6" Hole Unit Cell Universe <========================
+104  0  99 -CellCyl  FILL=3  U=9                                               $ 6" hole fuel unit cell
+105  0  #104           U=9                                                     $ Outside of 6" hole unit cell
+C ==========================> Lower Unit Universe <============================
+110  2  -2.70  99 -30 39      U=10                                             $ Platen
+111  2  -2.70  30 -31 39      U=10                                             $ PAP
+112  2  -2.70  33 -34 36 -37  U=10                                             $ Alignment tube
+113  RefNum  RefDen  31 -32 38  U=10                                           $ Bottom Reflector
+WRITE UNIT CELLS HERE
+C ==============================> REAL WORLD <=================================
+200  11  -7.766  99 -40 21 -22 23 -24 TRCL=(0 0 SDLoc)                         $ Steel diaphragm
+201  0           -50 99 -52 #200  FILL=11                                      $ Core volume
+202  RefNum  RefDen  21 -22 23 -24 50 -53 -20.6 #200                           $ Corner reflector
+203  RefNum  RefDen  21 -22 23 -24 25 53 -51                                   $ Top reflector
+204  RefNum  RefDen  -20 (-21:22:-23:24) #200                                  $ Side reflector
+C ================================> World <====================================
+1000 0  -1000  #200 #201 #202 #203 #204                                        $ Inside world
+1001 0   1000                                                                  $ Outside world
+
+C *****************************************************************************
+C *                             SURFACE CARDS                                 *
+C *****************************************************************************  
+C
+C ===========================> Unit Cell Surfaces <============================
+WRITE PLATE SURFACES HERE
+C ===========================> Reflector Surfaces <============================
+20   RPP  -RefHSL RefHSL  -RefHSL RefHSL  SysBottom RefTop                     $ Reflector
+21   PX   -27.94                                                               $ Separation planes between corner and side reflectors (21-24)
+22   PX    27.94
+23   PY   -27.94
+24   PY    27.94
+25   CZ     0.3175                                                             $ Hole in top reflector
+C ==========================> Lower Unit Surfaces <============================
+30   PZ    2.5400                                                              $ Platen top/ PAP bottom
+31   PZ    6.3500                                                              $ PAP top/ bottom reflector bottom
+32   PZ   20.7772                                                              $ Bottom reflector top
+33   PZ  TubeBottom                                                            $ Lower unit container bottom
+34   PZ   TubeTop                                                              $ Alignment tube top surface
+35   PZ   LowerUnitTop                                                         $ Lower unit container top
+36   CZ    2.5400                                                              $ Inner alignment tube surface
+37   CZ    3.1496                                                              $ Outer alignment tube surface
+38   CZ    3.1750                                                              $ Bottom reflector hole
+39   CZ    4.7625                                                              $ Platen/ PAP hole
+C ============================> Steel Diaphragm <==============================
+40   PZ    0.26416                                                             $ Top steel diaphragm surface
+C ==============================> Core Surfaces <==============================
+50   CZ  26.67                                                                 $ Core sides
+51   PZ  TRTop                                                                 $ Bottom of top reflector
+52   PZ  CoreTop                                                               $ Core top
+53   PZ  CRTop                                                                 $ Corner reflector top
+C =============================> Plate Surfaces <==============================
+60   SO  10000                                                                 $ Plate world
+61   CZ  3.175                                                                 $ 2.5 in. plate hole
+62   CZ  7.62                                                                  $ 6 in. plate hole
+C ===============================> Zero Plane <================================
+99   PZ   0.00                                                                 $ Zero plane
+C ==============================> World Surface <==============================
+1000  SO   500                                                                 $ World
+
+C *****************************************************************************
+C *                              DATA CARDS                                   *
+C *****************************************************************************
+C
+C ===============================> Source <====================================
+C
+WRITE KCODE HERE                                                               $
+C =======================> Kinetics and Sensitivity <==========================
+C
+WRITE KOPTS HERE                                                               $
+WRITE KSEN HERE                                                                $
+C
+C ===============================> Tallies <===================================
+C
+C Fission Rate in Fuel Plates
+C 
+F4:N   FuelPlates T  $
+FM4:N  1.0 3 18
+SD4    FuelTallySD  $
+E4     10E-6 100E-3 20
+C
+C Capture Rate in Molybdenum Plates
+C
+F14:N  MolyPlates T  $
+FM14:N 1.0 4 102
+SD14   MolyTallySD  $
+E14    10E-6 100E-3 20
+C 
+C Core Flux Mesh Tally
+C 
+FMESH24:N       GEOM = XYZ              ORIGIN = -RefHSL -RefHSL SysBottom     $
+                 AXS = 0 0 1               VEC = 1 0 0 
+               IMESH = RefHSL            IINTS = 100                           $
+               JMESH = RefHSL            JINTS = 100                           $
+               KMESH = RefTop            KINTS = 100                           $
+               EMESH = 10E-6 0.1 20      EINTS = 1 1 1 1
+C
+C Radial Profile Mesh Tally
+C
+FMESH34:N       GEOM = CYL              ORIGIN = 0 0 SysBottom                 $
+                 AXS = 0 0 1               VEC = 1 0 0                         
+               IMESH = 26.67             IINTS = 100
+               JMESH = CoreHeight        JINTS = 1                             $
+               KMESH = 1                 KINTS = 1                             $
+               EMESH = 10E-6 0.1 20      EINTS = 1 1 1 1                       $
+C
+C Axial Profile Mesh Tally
+C
+FMESH44:N       GEOM = CYL              ORIGIN = 0 0 SysBottom                 $
+                 AXS = 0 0 1               VEC = 1 0 0                          
+               IMESH = 26.67             IINTS = 1                             
+               JMESH = CoreHeight        JINTS = 100                           $
+               KMESH = 1                 KINTS = 1                             $
+               EMESH = 10E-6 0.1 20      EINTS = 1 1 1 1                      
+C
+C ==============================> Materials <==================================
+C M1: Dry Air (Density 1.205e-3 g/cc)
+M1    6000.80c  0.000150
+      7014.80c  0.784431
+      8016.80c  0.210748
+      18040.80c  0.004671
+C M2: Aluminum (Density 2.70 g/cc)
+M2   12024.80c  5.2172E-4
+     12025.80c  6.6049E-5
+     12026.80c  7.2720E-5
+     13027.80c  5.7816E-2
+     14028.80c  3.1630E-4
+     14029.80c  1.6016E-5
+     14030.80c  1.0631E-5
+     22046.80c  2.0745E-6
+     22047.80c  1.8708E-6
+     22048.80c  1.8537E-5
+     22049.80c  1.3603E-6
+     22050.80c  1.3025E-6
+     24050.80c  3.3536e-6
+     24052.80c  6.4673e-5
+     24053.80c  7.3325e-6
+     24054.80c  1.8254e-6
+     25055.80c  2.1915e-5
+     26054.80c  5.9360e-6
+     26056.80c  9.2280e-5
+     26057.80c  2.1128e-6
+     26058.80c  2.8171e-7
+     29063.80c  4.8053e-5
+     29065.80c  2.1418e-5
+MT2  al27.12t
+C M3: HEU (93 w/o enrichment, Density 18.8525 g/cc)
+M3   92234.80c  -0.010269
+     92235.80c  -0.933246
+     92236.80c  -0.02752
+     92238.80c  -0.054633
+C M4: Molybdenum (Natural, Density 10.22 g/cc)
+M4   42092.80c  0.1453
+     42094.80c  0.0915
+     42095.80c  0.1584
+     42096.80c  0.1667
+     42097.80c  0.0960
+     42098.80c  0.2439
+     42100.80c  0.0982
+C M5: Graphite (Density 1.7029 g/cc)
+M5    6000.80c  1
+MT5   grph.10t
+C M6: Beryllium (Density 1.848 g/cc)
+M6    4009.80c  1
+MT6   be.10t
+C M7: Teflon (Density 2.25 g/cc)
+M7    6000.80c  0.333339
+      9019.80c  0.666661
+C M8: Lucite (Density 1.19 g/cc)
+M8    1001.80c  0.533320
+      6000.80c  0.333345
+      8016.80c  0.133335
+C M9: Copper (Density 8.7351 g/cc)
+M9   29063.80c  0.6915
+     29065.80c  0.3085
+C M10: Nickel (Density 8.902 g/cc)
+M10  28058.80c  0.68077
+     28060.80c  0.26223
+     28061.80c  0.011399
+     28062.80c  0.036346
+     28064.80c  0.009255
+C M11: Steel (Density 7.766 g/cc)
+M11   6000.80c  0.00244
+      7014.80c  0.00201
+     14028.80c  0.01079
+     14029.80c  5.48145E-4
+     14030.80c  3.61764E-4
+     15031.80c  0.05000
+     16032.80c  6.64930E-5
+     16033.80c  5.25000E-7
+     16034.80c  2.97500E-6
+     16036.80c  7.00000E-9
+     24050.80c  0.00844
+     24052.80c  0.16276
+     24053.80c  0.01846
+     24054.80c  0.00223
+     25055.80c  0.01720
+     26054.80c  0.04098
+     26056.80c  0.64293
+     26057.80c  0.01486
+     26058.80c  0.00198
+     28058.80c  0.05191
+     28060.80c  0.02000
+     28061.80c  8.69174E-4
+     28062.80c  0.00277
+     28064.80c  7.05690E-4
+     29063.80c  1.24470E-5
+     29065.80c  5.55300E-5
+     42092.80c  2.33930E-4
+     42094.80c  1.47320E-4
+     42095.80c  2.55024E-4
+     42096.80c  2.68387E-4
+     42097.80c  1.54721E-4
+     42098.80c  3.92679E-4
+     42100.80c  1.58102E-4
+MT11 fe56.12t
+C ============================> Miscellaneous <================================
+MODE N
+C
+C *****************************************************************************
+C *                       CONFIGURATION PARAMETERS                            *
+C *****************************************************************************
+C
+C Moderator Thickness = ModThick $
+C Moderator Density = ModDen $
+C
+C Molybdenum Thickness = MolyThick $
+C
+C Reflector Density = RefDen $
+C
+C Number of Moderator Plates per Unit Cell = NumMod $
+C Number of Fuel Plates per Unit Cell = NumFuel $
+C Number of Molybdenum Plates per Unit Cell = NumMoly $
+C
+C Number of Top Units = TopUnits $
+C Number of Bottom Units = BottomUnits $
+C
+C Corner Reflector Bottom = SysBottom $
+C Corner Reflector Top = CRTop $

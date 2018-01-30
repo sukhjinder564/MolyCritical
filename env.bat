@@ -1,0 +1,6 @@
+echo off
+
+@ set DATAPATH=C:\MCNP\MCNP_DATA 
+@ set MCNPPATH=C:\MCNP\MCNP_CODE\MCNP_CODE\bin
+@ PATH %MCNPPATH%;%PATH% 
+@ set DISPLAY=localhost:0
